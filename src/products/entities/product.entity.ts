@@ -3,7 +3,7 @@ import { Prisma, Product } from '@prisma/client';
 import { Transform } from 'class-transformer';
 export class ProductEntity implements Product {
   @ApiProperty()
-  id: number;
+  id: string;
 
   @ApiProperty()
   createdAt: Date;

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -7,7 +8,12 @@ import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-cl
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    transformOptions: {
+        enableImplicitConversion: true, // 👈  transform payloads based on TS type
+      },
+  }));
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 

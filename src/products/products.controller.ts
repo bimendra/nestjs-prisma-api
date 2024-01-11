@@ -13,6 +13,8 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ProductEntity } from './entities/product.entity';
 import { Product } from '@prisma/client';
+import { ConnectionArgs } from 'src/page/connection-args.dto';
+import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
 
 @Controller('products')
 @ApiTags('products')
@@ -34,6 +36,11 @@ export class ProductsController {
     return products.map((product: Product) => new ProductEntity(product));
   }
 
+  @Get('page')
+  async findPage(@Query() connectionArgs: ConnectionArgs) {
+    return this.productsService.findPage(connectionArgs);
+  }
+
   @Get('drafts')
   @ApiOkResponse({ type: [ProductEntity] })
   async findDrafts() {
@@ -44,7 +51,7 @@ export class ProductsController {
   @Get(':id')
   @ApiOkResponse({ type: ProductEntity })
   async findOne(@Param('id') id: string) {
-    return new ProductEntity(await this.productsService.findOne(+id));
+    return new ProductEntity(await this.productsService.findOne(id));
   }
 
   @Patch(':id')
@@ -54,13 +61,13 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
   ) {
     return new ProductEntity(
-      await this.productsService.update(+id, updateProductDto),
+      await this.productsService.update(id, updateProductDto),
     );
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: ProductEntity })
   async remove(@Param('id') id: string) {
-    return new ProductEntity(await this.productsService.remove(+id));
+    return new ProductEntity(await this.productsService.remove(id));
   }
 }
